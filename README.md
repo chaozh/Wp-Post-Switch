@@ -1,8 +1,4 @@
-Wp-Post-Switch
-==============
-
 === Plugin Name ===
-
 Contributors: chaozh
 
 Donate link: http://chaozh.com/
@@ -23,40 +19,26 @@ Post Switch allows you to switch your editing post right in your admin post edit
 
 == Description ==
 
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
+*post switch* was created to free you from the hell of switching post panel in your admin dashboard when you want to edit more than one post at a time.
 
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
+This plugin adds a meta box in your post edit panel and will display all posts in the related category for choosing. Once selected, the post you are editing with will automaticaly changes to the chosen post.
 
 == Installation ==
 
 1. Uzip the `post-switch.zip` folder.
-1. Upload the `post-switch` folder to your `/wp-content/plugins` directory.
-1. In your WordPress dashboard, head over to the *Plugins* section.
-1. Activate *Post Switch*.
+2. Upload the `post-switch` folder to your `/wp-content/plugins` directory.
+3. In your WordPress dashboard, head over to the *Plugins* section.
+4. Activate *Post Switch*.
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
-
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
+= Which posts will show in the selection =
+Now only supports displaying posts in the same category, will be posts in the same parent category, tags or taxonomy in the future.
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets 
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png` 
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. adds meta box in admin post editing panel
+2. switch editing post
 
 == Changelog ==
 
