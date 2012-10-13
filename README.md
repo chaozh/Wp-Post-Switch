@@ -2,13 +2,21 @@ Wp-Post-Switch
 ==============
 
 === Plugin Name ===
+
 Contributors: chaozh
+
 Donate link: http://chaozh.com/
+
 Tags: admin, edit, plugin 
+
 Tested up to: 3.5
+
 Stable tag: 1.0
+
 Requires at least: 3.1
+
 License: GPLv2 or later
+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Post Switch allows you to switch your editing post right in your admin post edit panel
