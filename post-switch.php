@@ -3,12 +3,12 @@
 Plugin Name: Post Switch
 Plugin URI: http://chaozh.com
 Description: Quickly switch edit post 
-Version: 1.0
+Version: 1.1
 Author : chaozh
 Author URI: http://chaozh.com
 */
 define(POSTSWITCH_PLUGIN,'post_switch');
-define(POSTSWITCH_VERSION,'0.3');
+define(POSTSWITCH_VERSION,'1.1');
 load_plugin_textdomain(POSTSWITCH_PLUGIN,PLUGINDIR . '/' . dirname(plugin_basename (__FILE__)) );
 
 function get_plugin_url(){
@@ -17,8 +17,7 @@ function get_plugin_url(){
 
 function postswitch_add_custom_box(){
     wp_enqueue_script(POSTSWITCH_PLUGIN, get_plugin_url().'js/postswitch.js', array('jquery'), POSTSWITCH_VERSION);
-	//wp_enqueue_style(POSTSWITCH_PLUGIN, get_plugin_url().'css/postswitch.css', array(), POSTSWITCH_VERSION, 'screen');
-        
+	//wp_enqueue_style(POSTSWITCH_PLUGIN, get_plugin_url().'css/postswitch.css', array(), POSTSWITCH_VERSION, 'screen');       
     
     if ( function_exists( 'add_meta_box' ) ) {
         add_meta_box('postswitch_sidebar_meta_box',__('Post Switch',POSTSWITCH_PLUGIN),'postswitch_meta_box','post','side','high');
@@ -52,12 +51,12 @@ function adjacent_edit_post_link($format, $link, $in_same_cat = false, $excluded
 
 	$title = apply_filters('the_title', $title, $post->ID);
     $title_display = utf8Substr($title,0,8).'...';
-	$date = mysql2date(get_option('date_format'), $post->post_date);
+	//$date = mysql2date(get_option('date_format'), $post->post_date);
 	$rel = $previous ? 'prev' : 'next';
 
 	$string = '<a href="'.get_edit_post_link( $post->ID, true ).'" rel="'.$rel.'" title="'.__('Edit Post:',POSTSWITCH_PLUGIN).$title.'">';
 	$link = str_replace('%title', $title_display, $link);
-	$link = str_replace('%date', $date, $link);
+	//$link = str_replace('%date', $date, $link);
 	$link = $string . $link . '</a>';
 
 	$format = str_replace('%link', $link, $format);
@@ -74,6 +73,23 @@ function pre_next_edit_post_links($in_same_cat = false, $excluded_categories = '
     echo "</div>";
 }
 
+//code from category-template.php:wp_list_categories
+function get_the_category_parents( $id, &$visited = array()) {
+	$parent = &get_category( $id );
+    $parents = array();  
+
+	if ( is_wp_error( $parent ) )
+		return $parents;
+        
+    $parents[] = $parent;
+    
+	if ( $parent->parent && ( $parent->parent != $parent->term_id ) && !in_array( $parent->parent, $visited ) ) {
+        $visited[] = $parent->parent;
+        $parents = array_merge($parents, get_the_category_parents( $parent->parent, $visited));
+	}
+    return $parents;
+}
+
 function categories_dropdown(){
     //code from post.php
     if(isset($_GET['post']))
@@ -87,8 +103,23 @@ function categories_dropdown(){
 	   $post_type = $post->post_type;
 	   $post_type_object = get_post_type_object( $post_type );
     }
-    
+    //code from category-template.php:wp_list_categories
     $categories = get_the_category( $post_id );
+    
+    $default = $categories[0]->term_id;
+    //add surport to parent category
+    $visited = array();
+    $parents = array();
+    if (!empty($categories)){
+        foreach($categories as $category){
+            $visited[] = $category->term_id;
+            if($category->parent && ( $category->parent != $category->term_id ) && !in_array( $category->parent, $visited )){
+                $visited[] = $category->parent;
+                $parents= array_merge($parents, get_the_category_parents($category->parent, $visited));
+            }
+        }            
+    }
+    $categories = array_merge($categories, $parents);
     
     $tab_index_attribute = '';
 	if ( (int) $tab_index > 0 )
@@ -101,13 +132,12 @@ function categories_dropdown(){
     $output .= "<select name='categories' id='categories-dropdown' class='dropdown' $tab_index_attribute>\n";
     if (!empty($categories)){
         foreach($categories as $category){
-            if (is_null($cat_id)) $cat_id = $category->term_id;
             $cat_name = apply_filters('list_cats', $category->name, $category);
             $output .= "\t<option value=\"".$category->term_id."\"";
-		    if ( $category->term_id == $args['selected'] )
+		    if ( $category->term_id == $default )
 		       	$output .= ' selected="selected"';
             $output .= '>';
-            $output .= $pad.$cat_name;
+            $output .= $cat_name;
             $output .= "</option>\n";
         }
     }else{

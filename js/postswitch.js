@@ -35,14 +35,12 @@ jQuery(function($) {
     var part = location.search.split('=')[1];
     if(!part) return;
     var selectedID = part.split('&')[0];
-    //init categories dropdown options
-    var catID = $('#categories-dropdown option:first').val();
-    PW.ajaxPostDropdown(catID, selectedID);
     //bind option select event
     $('#categories-dropdown').change(function(){
         var catID = $('#categories-dropdown option:selected').val();
         PW.ajaxPostDropdown(catID, selectedID);
-    });
+    }).trigger("change");
+    //init categories dropdown options
     $('#posts-dropdown').change(function(){
         var postID = $('#posts-dropdown option:selected').val();
         PW.redirection(postID);
