@@ -77,15 +77,17 @@ function pre_next_edit_post_links($in_same_cat = false, $excluded_categories = '
 function get_the_category_parents( $id, &$visited = array()) {
 	$parent = &get_category( $id );
     $parents = array();  
+    $tmps = array();
 
 	if ( is_wp_error( $parent ) )
 		return $parents;
         
-    $parents[] = $parent;
+    $parents[$id] = $parent;
     
 	if ( $parent->parent && ( $parent->parent != $parent->term_id ) && !in_array( $parent->parent, $visited ) ) {
         $visited[] = $parent->parent;
-        $parents = array_merge($parents, get_the_category_parents( $parent->parent, $visited));
+        $tmps = get_the_category_parents( $parent->parent, $visited );
+        $parents = $parents + $tmps;
 	}
     return $parents;
 }
@@ -105,21 +107,23 @@ function categories_dropdown(){
     }
     //code from category-template.php:wp_list_categories
     $categories = get_the_category( $post_id );
-    
-    $default = $categories[0]->term_id;
-    //add surport to parent category
-    $visited = array();
-    $parents = array();
     if (!empty($categories)){
+        $default = $categories[0]->term_id;
+        //add surport to parent category
+        $visited = array();
+        $parents = array();
+        $nodes = array();
         foreach($categories as $category){
             $visited[] = $category->term_id;
+            $nodes[$category->term_id] = $category;
             if($category->parent && ( $category->parent != $category->term_id ) && !in_array( $category->parent, $visited )){
                 $visited[] = $category->parent;
-                $parents= array_merge($parents, get_the_category_parents($category->parent, $visited));
+                $parents = get_the_category_parents($category->parent, $visited);
+                $nodes = $nodes + $parents;
             }
         }            
+        $categories = $nodes;
     }
-    $categories = array_merge($categories, $parents);
     
     $tab_index_attribute = '';
 	if ( (int) $tab_index > 0 )
